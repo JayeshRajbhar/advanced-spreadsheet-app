@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: 'Work Sans', sans-serif;
+  }
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+  body {
+    background-color: #FFFFFF;
+    color: #111827;
+    font-family: 'Work Sans', sans-serif;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+@layer components {
+  .spreadsheet-cell {
+    border-right-width: 1px;
+    border-right-color: #e5e7eb;
+    outline: none;
+    transition: all 0.15s ease;
+  .spreadsheet-cell:hover {
+    background-color: #f9fafb;
+  }
+  
+  .spreadsheet-cell:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #3b82f6 inset;
+    border-color: transparent;
+  }
+
+  .spreadsheet-cell.selected {
+    background-color: #eff6ff;
+    box-shadow: 0 0 0 2px #3b82f6 inset;
+  }
+  
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-width: 1px;
+  }
+  
+  .priority-badge {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-width: 1px;
+  }
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.animate-slide-in-down {
+  animation: slideInDown 0.3s ease-out;
+}
+
