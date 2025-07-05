@@ -1,339 +1,16 @@
-import {
-  useState,
-  useCallback,
-  useMemo,
-  useRef,
-  useEffect,
-} from 'react';
-import {
-  ChevronDown,
-  ChevronUp,
-  Ellipsis,
-} from 'lucide-react';
+import { useState } from 'react';
 import SpreadsheetHeader from './SpreadsheetHeader';
 import { initialColumns } from '../constants/initialColumns';
-import { initialTasks } from '../constants/initialTasks';
 import type { Task } from '../types/Task';
 import type { Column } from '../types/Column';
 import { Footer } from './Footer';
 import { Toolbar } from './Toolbar';
-import { toast } from 'sonner';
-import { getStatusColor } from '../constants/StatusColour';
-import { getPriorityColor } from '../constants/ColourPriority';
-
-
-const createEmptyTask = (id: number, columns: Column[], editingCol?: string, editValue?: string): Task => {
-  const base: Task = {
-    id,
-    jobRequest: '',
-    submitted: '',
-    status: '',
-    submitter: '',
-    url: '',
-    assigned: '',
-    priority: '',
-    dueDate: '',
-    estValue: 0,
-  };
-  columns.forEach(col => {
-    if (!(col.key in base) && col.key !== 'id') {
-      // @ts-expect-error: dynamic property
-      base[col.key] = (editingCol && col.key === editingCol && editValue !== undefined) ? editValue : '';
-    }
-  });
-  return base;
-};
+import SpreadsheetBody from './SpreadsheetBody';
 
 const SpreadsheetApp = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [columns, setColumns] = useState<Column[]>(initialColumns);
-  const tableRef = useRef<HTMLDivElement>(null);
-  const [selectedCell, setSelectedCell] = useState<{
-    row: number;
-    col: string;
-  } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof Task;
-    direction: 'asc' | 'desc';
-  } | null>(null);
   const [showColumnMenu, setShowColumnMenu] = useState(false);
-  const [editingCell, setEditingCell] = useState<{
-    row: number;
-    col: string;
-  } | null>(null);
-  const [editValue, setEditValue] = useState('');
   const [totalRows, setTotalRows] = useState(25);
-  const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
-
-  const unifiedData = useMemo(() => {
-    const data = [...tasks];
-    const emptyRowsCount = Math.max(0, totalRows - tasks.length);
-
-    for (let i = 0; i < emptyRowsCount; i++) {
-      const emptyRow = createEmptyTask(tasks.length + i + 1, columns);
-      data.push(emptyRow);
-    }
-
-    return data;
-  }, [tasks, columns, totalRows]);
-
-  const filteredTasks = useMemo(() => {
-    let filtered = unifiedData;
-
-    if (searchTerm) {
-      filtered = filtered.filter(task =>
-        Object.values(task).some(value =>
-          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    }
-
-    if (sortConfig) {
-    const key = sortConfig.key;
-    const nonEmpty = filtered.filter(
-      task => task[key] !== '' && task[key] !== null && task[key] !== undefined
-    );
-    const empty = filtered.filter(
-      task => task[key] === '' || task[key] === null || task[key] === undefined
-    );
-    nonEmpty.sort((a, b) => {
-      const aValue = a[key];
-      const bValue = b[key];
-
-      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-    filtered = [...nonEmpty, ...empty];
-  }
-
-    return filtered;
-  }, [unifiedData, searchTerm, sortConfig]);
-
-  const visibleColumns = useMemo(() => columns.filter(col => col.visible), [columns]);
-
-  const handleSort = (key: keyof Task) => {
-    setSortConfig(current => ({
-      key,
-      direction:
-        current?.key === key && current.direction === 'asc' ? 'desc' : 'asc',
-    }));
-  };
-
-  const handleCellClick = (rowIndex: number, colKey: string) => {
-    setSelectedCell({ row: rowIndex, col: colKey });
-    setSelectedRow(null);
-    setSelectedColumn(null);
-    setEditingCell(null);
-  };
-
-  const handleRowClick = (rowIndex: number) => {
-    setSelectedRow(rowIndex);
-    setSelectedCell(null);
-    setSelectedColumn(null);
-    setEditingCell(null);
-  };
-
-  const handleColumnClick = (colKey: string) => {
-    setSelectedColumn(colKey);
-    setSelectedCell(null);
-    setSelectedRow(null);
-    setEditingCell(null);
-  };
-
-  const handleCellDoubleClick = useCallback(
-    (rowIndex: number, colKey: string) => {
-      const task = filteredTasks[rowIndex];
-      setEditingCell({ row: rowIndex, col: colKey });
-      
-      if (colKey in task) {
-        setEditValue(
-          task[colKey as keyof Task] !== undefined &&
-            task[colKey as keyof Task] !== null
-            ? String(task[colKey as keyof Task])
-            : ''
-        );
-      } else {
-        setEditValue('');
-      }
-    },
-    [filteredTasks]
-  );
-
-  const handleEditSubmit = useCallback(() => {
-    if (!editingCell) return;
-
-    const taskIndex = filteredTasks[editingCell.row].id - 1;
-    const updatedTasks = [...tasks];
-
-    if (taskIndex >= tasks.length) {
-      const newTask = createEmptyTask(taskIndex + 1, columns, editingCell.col, editValue);
-      updatedTasks.push(newTask);
-    } else {
-      updatedTasks[taskIndex] = {
-        ...updatedTasks[taskIndex],
-        [editingCell.col]: editValue,
-      };
-    }
-
-    setTasks(updatedTasks);
-    setEditingCell(null);
-    setEditValue('');
-  }, [editingCell, filteredTasks, tasks, columns, editValue]);
-
-  const handleEditCancel = useCallback(() => {
-    setEditingCell(null);
-    setEditValue('');
-  }, []);
-
-  const deleteSelectedRow = useCallback(() => {
-    if (selectedRow === null) return;
-    
-    const taskToDelete = filteredTasks[selectedRow];
-    if (taskToDelete && taskToDelete.id <= tasks.length) {
-      const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
-      const reindexedTasks = updatedTasks.map((task, index) => ({
-        ...task,
-        id: index + 1
-      }));
-      setTasks(reindexedTasks);
-    }
-    
-    setTotalRows(prev => Math.max(1, prev - 1));
-    setSelectedRow(null);
-  }, [selectedRow, filteredTasks, tasks]);
-
-  const deleteSelectedColumn = useCallback(() => {
-    if (!selectedColumn) return;
-    const updatedColumns = columns.filter(col => col.key !== selectedColumn);
-    setColumns(updatedColumns);
-    const updatedTasks: Task[] = tasks.map(task => {
-      const newTask: Task = { ...task };
-      delete ((newTask as unknown) as Record<string, unknown>)[selectedColumn];
-      return newTask;
-    });
-    setTasks(updatedTasks);
-
-    setSelectedColumn(null);
-  }, [selectedColumn, columns, tasks]);
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (editingCell) {
-        if (e.key === 'Enter') {
-          handleEditSubmit();
-        } else if (e.key === 'Escape') {
-          handleEditCancel();
-        }
-        return;
-      }
-
-      if (!selectedCell) return;
-
-      const maxRow = filteredTasks.length - 1;
-      const currentColIndex = visibleColumns.findIndex(
-        col => col.key === selectedCell.col
-      );
-
-      switch (e.key) {
-        case 'ArrowUp':
-          e.preventDefault();
-          setSelectedCell(prev =>
-            prev ? { ...prev, row: Math.max(0, prev.row - 1) } : null
-          );
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          setSelectedCell(prev =>
-            prev ? { ...prev, row: Math.min(maxRow, prev.row + 1) } : null
-          );
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          if (currentColIndex > 0) {
-            setSelectedCell(prev =>
-              prev
-                ? { ...prev, col: String(visibleColumns[currentColIndex - 1].key) }
-                : null
-            );
-          }
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          if (currentColIndex < visibleColumns.length - 1) {
-            setSelectedCell(prev =>
-              prev
-                ? { ...prev, col: String(visibleColumns[currentColIndex + 1].key) }
-                : null
-            );
-          }
-          break;
-        case 'Enter':
-          if (selectedCell) {
-            handleCellDoubleClick(selectedCell.row, selectedCell.col);
-          }
-          break;
-        case 'Delete':
-        if (selectedRow !== null) {
-          deleteSelectedRow();
-        } else if (selectedColumn) {
-          deleteSelectedColumn();
-        }
-        break;
-        case 'Escape':
-          setSelectedCell(null);
-          setSelectedRow(null);
-          setSelectedColumn(null);
-          break;
-      }
-    },
-    [
-      selectedCell,
-      selectedColumn,
-      selectedRow,
-      editingCell,
-      visibleColumns,
-      filteredTasks,
-      handleCellDoubleClick,
-      handleEditSubmit,
-      handleEditCancel,
-      deleteSelectedRow,
-      deleteSelectedColumn,
-    ]
-  );
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
-
-  const addNewColumn = () => {
-    const newColumnKey = `column_${Date.now()}`;
-    const newColumn: Column = {
-      key: newColumnKey,
-      header: 'New Column',
-      width: 110,
-      visible: true,
-      sortable: true,
-      class: '',
-      icon: '',
-    };
-
-    setColumns([...columns, newColumn]);
-
-    const updatedTasks = tasks.map(task => ({
-      ...task,
-      [newColumnKey]: '',
-    }));
-    setTasks(updatedTasks);
-  };
-
-  const addNewRow = () => {
-    setTotalRows(prev => prev + 1);
-  };
-
   const toggleColumnVisibility = (columnKey: keyof Task | string) => {
     setColumns(prev =>
       prev.map(col =>
@@ -341,44 +18,33 @@ const SpreadsheetApp = () => {
       )
     );
   };
-
-  const formatValue = (key: keyof Task | string, value: string | number) => {
-    console.log(`Formatting value for key: ${key}, value: ${value}`);
-    if (key === 'estValue' && value !== 0) {
-      return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(Number(value) || 0);
-    }
-    if (key === 'url' && typeof value === 'string' && value) {
-      return (
-        <a
-          href={`https://${value}`}
-          className="text-blue-600 hover:text-blue-800 underline text-sm"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {value}
-        </a>
-      );
-    }
-    return value!==0 ? value : '';
+  const [columns, setColumns] = useState<Column[]>(initialColumns);
+  const addNewRow = () => {
+    setTotalRows(prev => prev + 1);
   };
 
   return (
     <div className="min-h-screen w-full bg-gray-50 font-worksans">
+
       {/* Header */}
       <SpreadsheetHeader search={searchTerm} setSearchTerm={setSearchTerm} />
 
       {/* Toolbar */}
-      {Toolbar(showColumnMenu, setShowColumnMenu, toggleColumnVisibility, columns)}
+      {Toolbar(
+        showColumnMenu,
+        setShowColumnMenu,
+        toggleColumnVisibility,
+        columns
+      )}
 
-      {/* Main Content */}
-      {/* <SpreadsheetBody tableRef={tableRef} addNewColumn={addNewColumn} visibleColumns={visibleColumns} handleColumnClick={handleColumnClick} handleSort={handleSort} sortConfig={sortConfig} filteredTasks={filteredTasks} /> */}
-        {/* Spreadsheet */}
-        <div className="bg-white border border-gray-200 h-full">
+      {/* Spreadsheet Body */}
+      <SpreadsheetBody
+        searchTerm={searchTerm}
+        totalRow={totalRows}
+        setTotalRows={setTotalRows}
+      />
+
+      {/* <div className="bg-white border border-gray-200 h-full">
           <div ref={tableRef} className="overflow-auto h-full">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-l border-gray-200 sticky top-0 z-10">
@@ -390,12 +56,10 @@ const SpreadsheetApp = () => {
                   >
                     <div className="flex justify-start items-center">
                       <div className="flex justify-start bg-gray-100 rounded py-0.5 ml-2 pl-2 pr-3 text-gray-800 font-medium">
-                        {/* <Link2 className="text-blue-500 hover:underline mr-2" /> */}
                         <img src="Link.svg" alt="link" />
                         {' '}
                         Q3 Financial Overview
                       </div>
-                      {/* <RefreshCw className="h-4 w-4 ml-3 text-amber-500" /> */}
                       <img src="Arrow Sync.svg" alt="Sync" />
                     </div>
                   </th>
@@ -440,13 +104,11 @@ const SpreadsheetApp = () => {
                     className="flex justify-center items-center h-full border-r border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {addNewColumn();toast.success('New column added!');}}
                   >
-                    {/* <Plus size={28} /> */}
                     <img src="Add.svg" alt="Add column" />
                   </th>
                 </tr>
                 <tr>
                   <th className="border-r border-gray-200 w-10 px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {/* <Hash size={20} /> */}
                     <img src="Number Symbol.svg" alt="Hash" />
                   </th>
                   {visibleColumns.map(column => (
@@ -563,22 +225,16 @@ const SpreadsheetApp = () => {
               </tbody>
             </table>
           </div>
-        </div>
+      </div> */}
 
       {/* Footer */}
       <Footer onAddRow={addNewRow} />
+      
     </div>
   );
 };
 
 export default SpreadsheetApp;
-
-
-
-
-
-
-
 
 // import React, {
 //   useState,
@@ -613,7 +269,6 @@ export default SpreadsheetApp;
 // import { TbArrowAutofitHeight } from 'react-icons/tb';
 // import { FaRegShareFromSquare } from 'react-icons/fa6';
 // import { Footer } from './Footer';
-
 
 // const SpreadsheetApp: React.FC = () => {
 //   const [tasks, setTasks] = useState<Task[]>(initialTasks);
@@ -1104,7 +759,7 @@ export default SpreadsheetApp;
 //                     {visibleColumns.map(column => (
 //                       <td
 //                         key={`${task.id}-${column.key}`}
-//                         className={`border-r border-gray-200 px-2 py-1 min-w-[110px] max-w-[300px] text-sm cursor-cell relative 
+//                         className={`border-r border-gray-200 px-2 py-1 min-w-[110px] max-w-[300px] text-sm cursor-cell relative
 //                         ${
 //                           selectedCell?.row === rowIndex &&
 //                           selectedCell?.col === column.key
@@ -1192,15 +847,6 @@ export default SpreadsheetApp;
 // };
 
 // export default SpreadsheetApp;
-
-
-
-
-
-
-
-
-
 
 // import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 // import {

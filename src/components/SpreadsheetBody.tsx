@@ -1,238 +1,598 @@
-// import {
-//   ChevronDown,
-//   ChevronUp,
-//   Ellipsis,
-//   Hash,
-//   Link2,
-//   Plus,
-//   RefreshCw,
-// } from 'lucide-react';
-// import { toast } from 'sonner';
-// import type { Task } from '../types/Task';
-// import { getStatusColor } from '../constants/StatusColour';
-// import { getPriorityColor } from '../constants/ColourPriority';
-// import type { Column } from '../types/Column';
+import { ChevronDown, ChevronUp, Ellipsis } from 'lucide-react';
+import { toast } from 'sonner';
+import type { Task } from '../types/Task';
+import type { Column } from '../types/Column';
+import { getStatusColor } from '../constants/StatusColour';
+import { getPriorityColor } from '../constants/ColourPriority';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { initialTasks } from '../constants/initialTasks';
+import { initialColumns } from '../constants/initialColumns';
 
-// export const SpreadsheetBody = ({tableRef}: {tableRef: React.RefObject<HTMLDivElement | null>}, addNewColumn: () => void, visibleColumns: Column[], handleColumnClick: (colKey: string) => void, handleSort: (key: keyof Task) => void) => {
-//   return (
-//     <div className="bg-white border border-gray-200 h-full">
-//       <div ref={tableRef} className="overflow-auto h-full">
-//         <table className="w-full">
-//           <thead className="bg-gray-50 border-b border-l border-gray-200 sticky top-0 z-10">
-//             <tr className="border-b border-gray-200 h-9">
-//               <th className="w-10 border-r border-gray-200 px-2 py-1 text-left text-xs font-medium bg-white uppercase tracking-wider"></th>
-//               <th className="border-r border-gray-200 bg-gray-200" colSpan={4}>
-//                 <div className="flex justify-start items-center">
-//                   <div className="flex justify-start bg-gray-100 rounded py-0.5 ml-2 pl-2 pr-3 text-gray-800 font-medium">
-//                     <Link2 className="text-blue-500 hover:underline mr-2" /> Q3
-//                     Financial Overview
-//                   </div>
-//                   <RefreshCw className="h-4 w-4 ml-3 text-amber-500" />
-//                 </div>
-//               </th>
-//               <th className="bg-white border-r border-gray-200"></th>
-//               <th className="border-r border-gray-200 bg-green-200 text-green-800 px-2 py-1">
-//                 <div className="flex items-center w-full justify-center">
-//                   <img
-//                     src="split-green.svg"
-//                     alt=""
-//                     className="text-wrap inline-flex h-4 w-4 mr-2"
-//                   />
-//                   ABC
-//                   <Ellipsis className="ml-1" />
-//                 </div>
-//               </th>
-//               <th
-//                 className="border-r border-gray-200 px-2 py-1 bg-purple-200 text-purple-800"
-//                 colSpan={2}
-//               >
-//                 <div className="flex items-center w-full justify-center">
-//                   <img
-//                     src="split-svgrepo-com.svg"
-//                     alt=""
-//                     className="text-wrap inline-flex h-4 w-4 mr-2"
-//                   />
-//                   Answer a question
-//                   <Ellipsis className="ml-1" />
-//                 </div>
-//               </th>
-//               <th className="border-r border-gray-200 px-2 py-1 bg-orange-200 text-orange-800">
-//                 <div className="flex items-center w-full justify-center">
-//                   <img
-//                     src="split-svgrepo-com.svg"
-//                     alt=""
-//                     className="text-wrap inline-flex h-4 w-4 mr-2"
-//                   />
-//                   Extract
-//                   <Ellipsis className="ml-1" />
-//                 </div>
-//               </th>
-//               <th
-//                 className="flex justify-center items-center h-full border-r border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer"
-//                 onClick={() => {
-//                   addNewColumn();
-//                   toast.success('New column added!');
-//                 }}
-//               >
-//                 <Plus size={28} />
-//               </th>
-//             </tr>
-//             <tr>
-//               <th className="border-r border-gray-200 w-10 px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-//                 <Hash size={20} />
-//               </th>
-//               {visibleColumns.map(column => (
-//                 <th
-//                   key={column.key}
-//                   className={`border-r border-gray-200 px-2 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 relative group ${column.class}`}
-//                   style={{ width: column.width }}
-//                   onClick={e => {
-//                     e.stopPropagation();
-//                     handleColumnClick(column.key);
-//                   }}
-//                 >
-//                   <div
-//                     className={`flex items-center ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-center'}`}
-//                   >
-//                     <div className="flex items-center justify-center">
-//                       {column.icon && (
-//                         <column.icon className={`h-4 w-4 mr-2`} />
-//                       )}
-//                       <span className="flex items-center justify-center text-center pt-0.5">
-//                         {column.header}
-//                       </span>
-//                     </div>
-//                     {column.icon && column.key !== 'assigned' && (
-//                       <span className="ml-3">
-//                         {sortConfig?.direction === 'asc' ? (
-//                           <ChevronUp
-//                             size={16}
-//                             onClick={() =>
-//                               column.sortable &&
-//                               handleSort(column.key as keyof Task)
-//                             }
-//                           />
-//                         ) : (
-//                           <ChevronDown
-//                             size={16}
-//                             onClick={() =>
-//                               column.sortable &&
-//                               handleSort(column.key as keyof Task)
-//                             }
-//                           />
-//                         )}
-//                       </span>
-//                     )}
-//                   </div>
-//                 </th>
-//               ))}
-//             </tr>
-//           </thead>
-//           <tbody className="bg-white divide-y divide-gray-200">
-//             {filteredTasks.map((task, rowIndex) => (
-//               <tr
-//                 key={task.id}
-//                 className={`hover:bg-gray-50 ${
-//                   selectedRow === rowIndex
-//                     ? 'border-2 border-dashed border-red-300 bg-red-50'
-//                     : ''
-//                 }`}
-//               >
-//                 <td
-//                   className={`border border-gray-200 px-3 py-2 text-sm text-gray-500 cursor-pointer hover:bg-gray-100 ${
-//                     selectedRow === rowIndex
-//                       ? 'bg-red-100 border-dashed border-red-300'
-//                       : ''
-//                   }`}
-//                   onClick={() => handleRowClick(rowIndex)}
-//                 >
-//                   {task.id}
-//                 </td>
-//                 {visibleColumns.map(column => (
-//                   <td
-//                     key={`${task.id}-${column.key}`}
-//                     className={`border border-gray-200 px-2 py-1 min-w-[110px] max-w-[300px] text-sm cursor-cell relative 
-//                         ${
-//                           selectedCell?.row === rowIndex &&
-//                           selectedCell?.col === column.key
-//                             ? 'bg-blue-50 ring-2 ring-blue-500 ring-inset'
-//                             : ''
-//                         }
-//                         ${
-//                           selectedRow === rowIndex
-//                             ? 'bg-red-50 border-dashed border-red-300'
-//                             : ''
-//                         }
-//                         ${
-//                           selectedColumn === column.key
-//                             ? 'bg-red-50 border-dashed border-red-300'
-//                             : ''
-//                         }
-//                         ${
-//                           column.key === 'status' || column.key === 'priority'
-//                             ? 'flex border-0 h-11 items-center justify-center'
-//                             : ''
-//                         }
-//                         ${
-//                           column.key === 'submitted' ||
-//                           column.key === 'dueDate' ||
-//                           column.key === 'estValue'
-//                             ? 'text-end'
-//                             : ''
-//                         }
-//                         `}
-//                     onClick={() => handleCellClick(rowIndex, column.key)}
-//                     onDoubleClick={() =>
-//                       handleCellDoubleClick(rowIndex, column.key)
-//                     }
-//                   >
-//                     {editingCell?.row === rowIndex &&
-//                     editingCell?.col === column.key ? (
-//                       <input
-//                         type="text"
-//                         value={editValue}
-//                         onChange={e => setEditValue(e.target.value)}
-//                         onBlur={handleEditSubmit}
-//                         onKeyDown={e => {
-//                           if (e.key === 'Enter') handleEditSubmit();
-//                           if (e.key === 'Escape') handleEditCancel();
-//                         }}
-//                         className="w-full px-1 py-0 text-sm border-none outline-none bg-transparent"
-//                         autoFocus
-//                       />
-//                     ) : (
-//                       <>
-//                         {column.key === 'status' && task[column.key] ? (
-//                           <span
-//                             className={`inline-flex px-2 py-1 w-fit text-xs font-semibold rounded-full border ${getStatusColor(task[column.key])}`}
-//                           >
-//                             {task[column.key]}
-//                           </span>
-//                         ) : column.key === 'priority' && task[column.key] ? (
-//                           <span
-//                             className={`inline-flex px-2 py-1 text-xs font-semibold ${getPriorityColor(task[column.key])}`}
-//                           >
-//                             {task[column.key]}
-//                           </span>
-//                         ) : (
-//                           <div className="text-gray-900 truncate">
-//                             {formatValue(
-//                               column.key,
-//                               task[column.key as keyof Task]
-//                             )}
-//                           </div>
-//                         )}
-//                       </>
-//                     )}
-//                   </td>
-//                 ))}
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
+const createEmptyTask = (
+  id: number,
+  columns: Column[],
+  editingCol?: string,
+  editValue?: string
+): Task => {
+  const base: Task = {
+    id,
+    jobRequest: '',
+    submitted: '',
+    status: '',
+    submitter: '',
+    url: '',
+    assigned: '',
+    priority: '',
+    dueDate: '',
+    estValue: 0,
+  };
+  columns.forEach(col => {
+    if (!(col.key in base) && col.key !== 'id') {
+      // @ts-expect-error: dynamic property
+      base[col.key] =
+        editingCol && col.key === editingCol && editValue !== undefined
+          ? editValue
+          : '';
+    }
+  });
+  return base;
+};
 
-// export default SpreadsheetBody;
+type SpreadsheetBodyProps = {
+  searchTerm: string;
+  totalRow: number;
+  setTotalRows: (rows: number) => void;
+};
+
+export const SpreadsheetBody = ({
+  searchTerm,
+  totalRow,
+  setTotalRows,
+}: SpreadsheetBodyProps) => {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [selectedCell, setSelectedCell] = useState<{
+    row: number;
+    col: string;
+  } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Task;
+    direction: 'asc' | 'desc';
+  } | null>(null);
+  const [editingCell, setEditingCell] = useState<{
+    row: number;
+    col: string;
+  } | null>(null);
+    const [columns, setColumns] = useState<Column[]>(initialColumns);
+  
+  const [editValue, setEditValue] = useState('');
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
+
+  const unifiedData = useMemo(() => {
+    const data = [...tasks];
+    const emptyRowsCount = Math.max(0, totalRow - tasks.length);
+
+    for (let i = 0; i < emptyRowsCount; i++) {
+      const emptyRow = createEmptyTask(tasks.length + i + 1, columns);
+      data.push(emptyRow);
+    }
+
+    return data;
+  }, [tasks, columns, totalRow]);
+
+  const filteredTasks = useMemo(() => {
+    let filtered = unifiedData;
+
+    if (searchTerm) {
+      filtered = filtered.filter(task =>
+        Object.values(task).some(value =>
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+
+    if (sortConfig) {
+      const key = sortConfig.key;
+      const nonEmpty = filtered.filter(
+        task =>
+          task[key] !== '' && task[key] !== null && task[key] !== undefined
+      );
+      const empty = filtered.filter(
+        task =>
+          task[key] === '' || task[key] === null || task[key] === undefined
+      );
+      nonEmpty.sort((a, b) => {
+        const aValue = a[key];
+        const bValue = b[key];
+
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+      filtered = [...nonEmpty, ...empty];
+    }
+
+    return filtered;
+  }, [unifiedData, searchTerm, sortConfig]);
+
+  const visibleColumns = useMemo(
+    () => columns.filter(col => col.visible),
+    [columns]
+  );
+
+  const handleSort = (key: keyof Task) => {
+    setSortConfig(current => ({
+      key,
+      direction:
+        current?.key === key && current.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const handleCellClick = (rowIndex: number, colKey: string) => {
+    setSelectedCell({ row: rowIndex, col: colKey });
+    setSelectedRow(null);
+    setSelectedColumn(null);
+    setEditingCell(null);
+  };
+
+  const handleRowClick = (rowIndex: number) => {
+    setSelectedRow(rowIndex);
+    setSelectedCell(null);
+    setSelectedColumn(null);
+    setEditingCell(null);
+  };
+
+  const handleColumnClick = (colKey: string) => {
+    setSelectedColumn(colKey);
+    setSelectedCell(null);
+    setSelectedRow(null);
+    setEditingCell(null);
+  };
+
+  const handleCellDoubleClick = useCallback(
+    (rowIndex: number, colKey: string) => {
+      const task = filteredTasks[rowIndex];
+      setEditingCell({ row: rowIndex, col: colKey });
+
+      if (colKey in task) {
+        setEditValue(
+          task[colKey as keyof Task] !== undefined &&
+            task[colKey as keyof Task] !== null
+            ? String(task[colKey as keyof Task])
+            : ''
+        );
+      } else {
+        setEditValue('');
+      }
+    },
+    [filteredTasks]
+  );
+
+  const handleEditSubmit = useCallback(() => {
+    if (!editingCell) return;
+
+    const taskIndex = filteredTasks[editingCell.row].id - 1;
+    const updatedTasks = [...tasks];
+
+    if (taskIndex >= tasks.length) {
+      const newTask = createEmptyTask(
+        taskIndex + 1,
+        columns,
+        editingCell.col,
+        editValue
+      );
+      updatedTasks.push(newTask);
+    } else {
+      updatedTasks[taskIndex] = {
+        ...updatedTasks[taskIndex],
+        [editingCell.col]: editValue,
+      };
+    }
+
+    setTasks(updatedTasks);
+    setEditingCell(null);
+    setEditValue('');
+  }, [editingCell, filteredTasks, tasks, columns, editValue]);
+
+  const handleEditCancel = useCallback(() => {
+    setEditingCell(null);
+    setEditValue('');
+  }, []);
+
+  const deleteSelectedRow = useCallback(() => {
+    if (selectedRow === null) return;
+
+    const taskToDelete = filteredTasks[selectedRow];
+    if (taskToDelete && taskToDelete.id <= tasks.length) {
+      const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
+      const reindexedTasks = updatedTasks.map((task, index) => ({
+        ...task,
+        id: index + 1,
+      }));
+      setTasks(reindexedTasks);
+    }
+
+    setTotalRows(Math.max(1, totalRow - 1));
+    setSelectedRow(null);
+  }, [selectedRow, filteredTasks, tasks, setTotalRows, totalRow]);
+
+  const deleteSelectedColumn = useCallback(() => {
+    if (!selectedColumn) return;
+    const updatedColumns = columns.filter(col => col.key !== selectedColumn);
+    setColumns(updatedColumns);
+    const updatedTasks: Task[] = tasks.map(task => {
+      const newTask: Task = { ...task };
+      delete (newTask as unknown as Record<string, unknown>)[selectedColumn];
+      return newTask;
+    });
+    setTasks(updatedTasks);
+
+    setSelectedColumn(null);
+  }, [selectedColumn, columns, tasks]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (editingCell) {
+        if (e.key === 'Enter') {
+          handleEditSubmit();
+        } else if (e.key === 'Escape') {
+          handleEditCancel();
+        }
+        return;
+      }
+
+      if (!selectedCell) return;
+
+      const maxRow = filteredTasks.length - 1;
+      const currentColIndex = visibleColumns.findIndex(
+        col => col.key === selectedCell.col
+      );
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setSelectedCell(prev =>
+            prev ? { ...prev, row: Math.max(0, prev.row - 1) } : null
+          );
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setSelectedCell(prev =>
+            prev ? { ...prev, row: Math.min(maxRow, prev.row + 1) } : null
+          );
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (currentColIndex > 0) {
+            setSelectedCell(prev =>
+              prev
+                ? {
+                    ...prev,
+                    col: String(visibleColumns[currentColIndex - 1].key),
+                  }
+                : null
+            );
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (currentColIndex < visibleColumns.length - 1) {
+            setSelectedCell(prev =>
+              prev
+                ? {
+                    ...prev,
+                    col: String(visibleColumns[currentColIndex + 1].key),
+                  }
+                : null
+            );
+          }
+          break;
+        case 'Enter':
+          if (selectedCell) {
+            handleCellDoubleClick(selectedCell.row, selectedCell.col);
+          }
+          break;
+        case 'Delete':
+          if (selectedRow !== null) {
+            deleteSelectedRow();
+          } else if (selectedColumn) {
+            deleteSelectedColumn();
+          }
+          break;
+        case 'Escape':
+          setSelectedCell(null);
+          setSelectedRow(null);
+          setSelectedColumn(null);
+          break;
+      }
+    },
+    [
+      selectedCell,
+      selectedColumn,
+      selectedRow,
+      editingCell,
+      visibleColumns,
+      filteredTasks,
+      handleCellDoubleClick,
+      handleEditSubmit,
+      handleEditCancel,
+      deleteSelectedRow,
+      deleteSelectedColumn,
+    ]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  const addNewColumn = () => {
+    const newColumnKey = `column_${Date.now()}`;
+    const newColumn: Column = {
+      key: newColumnKey,
+      header: 'New Column',
+      width: 110,
+      visible: true,
+      sortable: true,
+      class: '',
+      icon: '',
+    };
+
+    setColumns([...columns, newColumn]);
+
+    const updatedTasks = tasks.map(task => ({
+      ...task,
+      [newColumnKey]: '',
+    }));
+    setTasks(updatedTasks);
+  };
+
+  
+
+  const formatValue = (key: keyof Task | string, value: string | number) => {
+    console.log(`Formatting value for key: ${key}, value: ${value}`);
+    if (key === 'estValue' && value !== 0) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(Number(value) || 0);
+    }
+    if (key === 'url' && typeof value === 'string' && value) {
+      return (
+        <a
+          href={`https://${value}`}
+          className="text-blue-600 hover:text-blue-800 underline text-sm"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {value}
+        </a>
+      );
+    }
+    return value !== 0 ? value : '';
+  };
+
+  return (
+    <div className="bg-white border border-gray-200 h-full">
+      <div ref={tableRef} className="overflow-auto h-full">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-l border-gray-200 sticky top-0 z-10">
+            <tr className="border-b border-gray-200 h-9">
+              <th className="w-10 border-r border-gray-200 px-2 py-1 text-left text-xs font-medium bg-white uppercase tracking-wider"></th>
+              <th className="border-r border-gray-200 bg-gray-200" colSpan={4}>
+                <div className="flex justify-start items-center">
+                  <div className="flex justify-start bg-gray-100 rounded py-0.5 ml-2 pl-2 pr-3 text-gray-800 font-medium">
+                    <img src="Link.svg" alt="link" /> Q3 Financial Overview
+                  </div>
+                  <img src="Arrow Sync.svg" alt="Sync" />
+                </div>
+              </th>
+              <th className="bg-white border-r border-gray-200"></th>
+              <th className="border-r border-gray-200 bg-green-200 text-green-800 px-2 py-1">
+                <div className="flex items-center w-full justify-center">
+                  <img
+                    src="Arrow_Split.svg"
+                    alt="Split"
+                    className="text-wrap inline-flex h-4 w-4 mr-2"
+                  />
+                  ABC
+                  <Ellipsis className="ml-1" />
+                </div>
+              </th>
+              <th
+                className="border-r border-gray-200 px-2 py-1 bg-purple-200 text-purple-800"
+                colSpan={2}
+              >
+                <div className="flex items-center w-full justify-center">
+                  <img
+                    src="Arrow_Split.svg"
+                    alt="Split"
+                    className="text-wrap inline-flex h-4 w-4 mr-2"
+                  />
+                  Answer a question
+                  <Ellipsis className="ml-1" />
+                </div>
+              </th>
+              <th className="border-r border-gray-200 px-2 py-1 bg-orange-200 text-orange-800">
+                <div className="flex items-center w-full justify-center">
+                  <img
+                    src="Arrow_Split.svg"
+                    alt="Split"
+                    className="text-wrap inline-flex h-4 w-4 mr-2"
+                  />
+                  Extract
+                  <Ellipsis className="ml-1" />
+                </div>
+              </th>
+              <th
+                className="flex justify-center items-center h-full border-r border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  addNewColumn();
+                  toast.success('New column added!');
+                }}
+              >
+                <img src="Add.svg" alt="Add column" />
+              </th>
+            </tr>
+            <tr>
+              <th className="border-r border-gray-200 w-10 px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <img src="Number Symbol.svg" alt="Hash" />
+              </th>
+              {visibleColumns.map(column => (
+                <th
+                  key={column.key}
+                  className={`border-r border-gray-200 px-2 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 relative group ${column.class}`}
+                  style={{ width: column.width }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleColumnClick(column.key);
+                  }}
+                >
+                  <div
+                    className={`flex items-center ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-center'}`}
+                  >
+                    <div className="flex items-center justify-center">
+                      {column.icon && (
+                        <img src={column.icon} alt={column.header} />
+                      )}
+                      <span className="flex items-center justify-center text-center pt-0.5">
+                        {column.header}
+                      </span>
+                    </div>
+                    {column.icon && column.key !== 'assigned' && (
+                      <span className="ml-3">
+                        {sortConfig?.direction === 'asc' ? (
+                          <ChevronUp
+                            size={16}
+                            onClick={() =>
+                              column.sortable &&
+                              handleSort(column.key as keyof Task)
+                            }
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={16}
+                            onClick={() =>
+                              column.sortable &&
+                              handleSort(column.key as keyof Task)
+                            }
+                          />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredTasks.map((task, rowIndex) => (
+              <tr
+                key={task.id}
+                className={`hover:bg-gray-50 ${
+                  selectedRow === rowIndex
+                    ? 'border-2 border-dashed border-red-300 bg-red-50'
+                    : ''
+                }`}
+              >
+                <td
+                  className={`border border-gray-200 px-3 py-2 text-sm text-gray-500 cursor-pointer hover:bg-gray-100 ${
+                    selectedRow === rowIndex
+                      ? 'bg-red-100 border-dashed border-red-300'
+                      : ''
+                  }`}
+                  onClick={() => handleRowClick(rowIndex)}
+                >
+                  {task.id}
+                </td>
+                {visibleColumns.map(column => (
+                  <td
+                    key={`${task.id}-${column.key}`}
+                    className={`border border-gray-200 px-2 py-1 min-w-[110px] max-w-[300px] text-sm cursor-cell relative 
+                        ${
+                          selectedCell?.row === rowIndex &&
+                          selectedCell?.col === column.key
+                            ? 'bg-blue-50 ring-2 ring-blue-500 ring-inset'
+                            : ''
+                        }
+                        ${
+                          selectedRow === rowIndex
+                            ? 'bg-red-50 border-dashed border-red-300'
+                            : ''
+                        }
+                        ${
+                          selectedColumn === column.key
+                            ? 'bg-red-50 border-dashed border-red-300'
+                            : ''
+                        }
+                        ${
+                          column.key === 'status' || column.key === 'priority'
+                            ? 'flex border-0 h-11 items-center justify-center'
+                            : ''
+                        }
+                        ${
+                          column.key === 'submitted' ||
+                          column.key === 'dueDate' ||
+                          column.key === 'estValue'
+                            ? 'text-end'
+                            : ''
+                        }
+                        `}
+                    onClick={() => handleCellClick(rowIndex, column.key)}
+                    onDoubleClick={() =>
+                      handleCellDoubleClick(rowIndex, column.key)
+                    }
+                  >
+                    {editingCell?.row === rowIndex &&
+                    editingCell?.col === column.key ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={e => setEditValue(e.target.value)}
+                        onBlur={handleEditSubmit}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') handleEditSubmit();
+                          if (e.key === 'Escape') handleEditCancel();
+                        }}
+                        className="w-full px-1 py-0 text-sm border-none outline-none bg-transparent"
+                        autoFocus
+                      />
+                    ) : (
+                      <>
+                        {column.key === 'status' && task[column.key] ? (
+                          <span
+                            className={`inline-flex px-2 py-1 w-fit text-xs font-semibold rounded-full border ${getStatusColor(task[column.key])}`}
+                          >
+                            {task[column.key]}
+                          </span>
+                        ) : column.key === 'priority' && task[column.key] ? (
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-semibold ${getPriorityColor(task[column.key])}`}
+                          >
+                            {task[column.key]}
+                          </span>
+                        ) : (
+                          <div className="text-gray-900 truncate">
+                            {formatValue(
+                              column.key,
+                              task[column.key as keyof Task]
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default SpreadsheetBody;
