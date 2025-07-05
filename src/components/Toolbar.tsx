@@ -9,22 +9,24 @@ export function Toolbar(
 ) {
   return (
     <div className="w-full flex flex-row border-b border-[#EEEEEE] bg-white px-2 py-1.5 gap-2 items-center">
-      <div className="p-2 gap-1 flex flex-row">
+
+      <div className="p-2 gap-1 flex flex-row items-center">
         <span
           onClick={() => toast.info('Toolbar is already visible!')}
-          className="font-[400] text-nowrap text-[#121212] text-sm"
+          className="font-[400] whitespace-nowrap text-[#121212] text-sm cursor-pointer"
         >
           Tool bar
         </span>
         <ChevronsRight className="inline-flex h-4 w-4" />
       </div>
 
-      <div className="h-6 w-[1px] bg-[#EEEEEE]"></div>
+      <div className="h-6 w-[1px] bg-[#EEEEEE]" />
 
-      <div className="flex flex-row items-center gap-1 w-full">
+      <div className="flex flex-row items-center gap-1 flex-1 min-w-0">
         <button
           onClick={() => setShowColumnMenu(!showColumnMenu)}
-          className="flex items-center w-fit gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md relative"
+          className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md relative whitespace-nowrap"
+          type="button"
         >
           <img src="Eye.svg" alt="Hide option" className="h-5 w-5" />
           Hide fields
@@ -53,7 +55,8 @@ export function Toolbar(
               'Sort functionality is already implemented for every column, click on the column header arrow to sort!'
             )
           }
-          className="flex items-center w-fit gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md"
+          className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md whitespace-nowrap"
+          type="button"
         >
           <img src="Arrow Sort.svg" alt="Sort" className="h-5 w-5" />
           Sort
@@ -62,7 +65,8 @@ export function Toolbar(
           onClick={() =>
             toast.info('Filter functionality will be implemented soon!')
           }
-          className="flex items-center w-fit gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md"
+          className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md whitespace-nowrap"
+          type="button"
         >
           <img src="Filter.svg" alt="Filter" className="h-5 w-5" />
           Filter
@@ -71,50 +75,53 @@ export function Toolbar(
           onClick={() =>
             toast.info('Cell view functionality will be implemented soon!')
           }
-          className="flex items-center w-fit gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md"
+          className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md whitespace-nowrap"
+          type="button"
         >
           <img src="Arrow Autofit.svg" alt="Cell view" className="h-5 w-5" />
           Cell view
         </button>
       </div>
 
-      <div className="w-fit flex flex-row items-center gap-2">
-        <div className="flex flex-row items-center gap-2">
-          <button
-            onClick={() => toast.warning('Login to import data!')}
-            className="flex flex-row w-fit items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md"
-          >
-            <img src="Arrow Download.svg" alt="Import" className="h-5 w-5" />
-            <div className="text-sm font-[400] text-[#545454] text-nowrap">
-              Import
-            </div>
-          </button>
-          <div
-            onClick={() => toast.success('Data exported successfully!')}
-            className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md"
-          >
-            <img src="Arrow Upload.svg" alt="Export" className="h-5 w-5" />
-            <div className="text-sm w-11.5 h-5 font-[400] text-[#545454] text-nowrap">
-              Export
-            </div>
-          </div>
-          <div
-            onClick={() => toast.warning('Login to share data!')}
-            className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md"
-          >
-            <img src="Share.svg" alt="Share" className="h-5 w-5" />
-            <div className="text-sm w-10 h-5 font-[400] text-[#545454] text-nowrap">
-              Share
-            </div>
-          </div>
-        </div>
 
+      <div className="flex flex-row items-center gap-2">
+        <button
+          onClick={() => toast.warning('Login to import data!')}
+          className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md whitespace-nowrap"
+          type="button"
+        >
+          <img src="Arrow Download.svg" alt="Import" className="h-5 w-5" />
+          <span className="text-sm font-[400] text-[#545454] whitespace-nowrap">
+            Import
+          </span>
+        </button>
+        <button
+          onClick={() => toast.success('Data exported successfully!')}
+          className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md whitespace-nowrap"
+          type="button"
+        >
+          <img src="Arrow Upload.svg" alt="Export" className="h-5 w-5" />
+          <span className="text-sm font-[400] text-[#545454] whitespace-nowrap">
+            Export
+          </span>
+        </button>
+        <button
+          onClick={() => toast.warning('Login to share data!')}
+          className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md whitespace-nowrap"
+          type="button"
+        >
+          <img src="Share.svg" alt="Share" className="h-5 w-5" />
+          <span className="text-sm font-[400] text-[#545454] whitespace-nowrap">
+            Share
+          </span>
+        </button>
         <button
           onClick={() => toast.success('New action created!')}
-          className="inline-flex px-6 py-2 gap-1 bg-[#4B6A4F] text-white rounded-md shadow  hover:bg-green-700"
+          className="inline-flex px-6 py-2 gap-1 bg-[#4B6A4F] text-white rounded-md shadow hover:bg-green-700 whitespace-nowrap"
+          type="button"
         >
           <img src="Arrow_Split.svg" alt="Arrow Split" className="h-5 w-5" />
-          <span className="font-[500] text-sm h-5 w-19.5 text-nowrap">
+          <span className="font-[500] text-sm whitespace-nowrap">
             New Action
           </span>
         </button>
