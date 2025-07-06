@@ -350,8 +350,6 @@ export const SpreadsheetBody = ({
     console.log(`Formatting value for key: ${key}, value: ${value}`);
     if (key === 'estValue' && value !== 0) {
       return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(Number(value) || 0);
@@ -360,11 +358,11 @@ export const SpreadsheetBody = ({
       return (
         <a
           href={`https://${value}`}
-          className="text-blue-600 hover:text-blue-800 underline text-sm"
+          className="text-[#121212] hover:text-blue-600 underline text-sm"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {value}
+          <span className='truncate'>{value}</span>
         </a>
       );
     }
@@ -375,11 +373,11 @@ export const SpreadsheetBody = ({
     <div className="bg-white border-gray-200 h-full">
       <div ref={tableRef} className="overflow-auto h-full">
         <table className="w-fit">
-          <thead className="bg-gray-50 border-b border-l border-r border-gray-200 sticky top-0 z-10">
-            <tr className="border-b border-gray-200 h-8">
-              <th className="w-8 border-r border-gray-200 px-2 py-1 text-left text-xs font-medium bg-white uppercase tracking-wider"></th>
+          <thead className="bg-gray-50 border-b border-[#CBCBCB] sticky top-0 z-10">
+            <tr className="border-b border-white h-8">
+              <th className="w-8 h-8 border-l border-white px-2 py-1 text-left text-xs font-medium bg-white uppercase tracking-wider"></th>
               <th
-                className="border-r border-gray-200 bg-[#E2E2E2] p-2"
+                className="border-l border-white bg-[#E2E2E2] px-2 py-1"
                 colSpan={4}
               >
                 <div className="flex flex-row items-center gap-2">
@@ -392,23 +390,23 @@ export const SpreadsheetBody = ({
                   <img src="Arrow Sync.svg" alt="Sync" className="h-4 w-4" />
                 </div>
               </th>
-              <th className="bg-white border-r border-gray-200"></th>
-              <th className="border-r border-gray-200 bg-[#D2E0D4] px-4 gap-2">
-                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-1">
+              <th className="bg-white border-l border-white"></th>
+              <th className="border-l border-white bg-[#D2E0D4] px-4 gap-2">
+                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
                   <img
                     src="Arrow_split_green.svg"
                     alt="Split"
                     className="h-4 w-4"
                   />
                   <span className="text-sm font-[500] text-[#505450]">ABC</span>
-                  <Ellipsis className="h-5 w-5 text-[#AFAFAF]" />
+                  <Ellipsis className="h-4 w-4 m-0.5 text-[#AFAFAF]" />
                 </div>
               </th>
               <th
-                className="border-r border-gray-200 px-4 gap-2 bg-[#DCCFFC]"
+                className="border-l border-white px-4 gap-2 bg-[#DCCFFC]"
                 colSpan={2}
               >
-                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-1">
+                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
                   <img
                     src="Arrow_split_white.svg"
                     alt="Split"
@@ -417,11 +415,11 @@ export const SpreadsheetBody = ({
                   <span className="text-sm font-[500] text-[#463E59]">
                     Answer a question
                   </span>
-                  <Ellipsis className="h-5 w-5 text-[#AFAFAF]" />
+                  <Ellipsis className="h-4 w-4 m-0.5 text-[#AFAFAF]" />
                 </div>
               </th>
-              <th className="border-r border-gray-200 px-4 gap-2 bg-[#FAC2AF]">
-                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-1">
+              <th className="border-l border-white px-4 gap-2 bg-[#FAC2AF]">
+                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
                   <img
                     src="Arrow_split_white.svg"
                     alt="Split"
@@ -430,11 +428,11 @@ export const SpreadsheetBody = ({
                   <span className="text-sm font-[500] text-[#695149]">
                     Extract
                   </span>
-                  <Ellipsis className="h-5 w-5 text-[#AFAFAF]" />
+                  <Ellipsis className="h-4 w-4 m-0.5 text-[#AFAFAF]" />
                 </div>
               </th>
               <th
-                className="px-2 gap-2 border-r border-gray-200 cursor-pointer w-32"
+                className="px-2 gap-2 relative dashed-border-column z-10 border-b border-gray-200 cursor-pointer w-32"
                 onClick={() => {
                   addNewColumn();
                   toast.success('New column added!');
@@ -445,22 +443,21 @@ export const SpreadsheetBody = ({
                 </div>
               </th>
             </tr>
-            <tr className='h-9'>
-              <th className="border-r border-gray-200 pl-3 pr-1 gap-1">
-                <img src="Number Symbol.svg" alt="Hash" className="w-5 h-4" />
+            <tr className='border-b border-gray-200 h-8'>
+              <th className="border-l border-white bg-[#EEEEEE] pl-2 pr-1 w-8 h-8 py-1.5 flex items-center justify-center">
+                <img src="Hash.svg" alt="Hash" className="w-4 mr-1 h-4 text-left" />
               </th>
               {visibleColumns.map(column => (
                 <th
                   key={column.key}
-                  className={`border-r border-gray-200 pr-1 pl-2 gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-gray-100 ${column.class}`}
-                  // style={{ width: column.width }}
+                  className={`border-l border-white pr-1 pl-2 gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-gray-100 ${column.class}`}
                   onClick={e => {
                     e.stopPropagation();
                     handleColumnClick(column.key);
                   }}
                 >
                   <div
-                    className={`flex flex-row items-center gap-1 w-full ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-center'}`}
+                    className={`flex flex-row items-center gap-1 w-full ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-start'}`}
                   >
                     <div className="inline-flex flex-row gap-1 items-center">
                       {column.icon && (
@@ -498,36 +495,37 @@ export const SpreadsheetBody = ({
                   </div>
                 </th>
               ))}
+              <th className='h-full relative dashed-border-column z-10 w-[124px]'></th>
             </tr>
           </thead>
-          <tbody className="bg-white border-r border-gray-200 divide-y divide-gray-200">
+          <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-200">
             {filteredTasks.map((task, rowIndex) => (
               <tr
                 key={task.id}
                 className={`hover:bg-gray-50 ${
                   selectedRow === rowIndex
-                    ? 'border-2 border-dashed border-red-300 bg-red-50 h-9'
+                    ? 'border-2 border-dashed border-red-300 bg-red-50 h-8'
                     : ''
                 }`}
               >
                 <td
-                  className={`px-3 text-sm text-center text-[#757575] font-[400] cursor-pointer hover:bg-gray-100 ${
+                  className={`w-8 h-8 flex items-center justify-center cursor-pointer relative hover:bg-gray-100 ${
                     selectedRow === rowIndex
                       ? 'bg-red-100 border-dashed border-red-300'
                       : ''
                   }`}
                   onClick={() => handleRowClick(rowIndex)}
                 >
-                  {task.id}
+                  <span className='text-sm w-fit h-5 top-1.5 text-[#757575] font-[400]'>{task.id}</span>
                 </td>
                 {visibleColumns.map(column => (
                   <td
                     key={`${task.id}-${column.key}`}
-                    className={`border border-gray-200 px-2 gap-2 min-w-[110px] max-w-[300px] text-xs cursor-cell relative 
+                    className={`border-l border-gray-200 px-2 gap-2 min-w-[124px] max-w-[256px] text-xs font-[400] text-[#121212] cursor-cell relative 
                         ${
                           selectedCell?.row === rowIndex &&
                           selectedCell?.col === column.key
-                            ? 'bg-blue-50 ring-2 ring-blue-500 ring-inset'
+                            ? 'bg-white ring-1 ring-[#6C8B70] ring-inset'
                             : ''
                         }
                         ${
@@ -542,7 +540,7 @@ export const SpreadsheetBody = ({
                         }
                         ${
                           column.key === 'status' || column.key === 'priority'
-                            ? 'flex border-0 h-11 items-center justify-center'
+                            ? 'text-center'
                             : ''
                         }
                         ${
@@ -592,17 +590,21 @@ export const SpreadsheetBody = ({
                             {task[column.key]}
                           </span>
                         ) : (
-                          <div className="text-gray-900 truncate">
+                          <div className={`text-gray-900 truncate 
+                            ${column.key === 'url' ? "w-[124px]" : ""}
+                            `}>
                             {formatValue(
                               column.key,
                               task[column.key as keyof Task]
                             )}
+                            {column.key === 'estValue' && task[column.key] ? <span className="pl-1 text-xs text-[#AFAFAF]">₹</span> :""}
                           </div>
                         )}
                       </>
                     )}
                   </td>
                 ))}
+                <td className='h-full relative dashed-border-column z-10 w-[124px]'></td>
               </tr>
             ))}
           </tbody>
