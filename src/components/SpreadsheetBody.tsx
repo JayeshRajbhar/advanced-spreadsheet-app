@@ -63,8 +63,7 @@ export const SpreadsheetBody = ({
     row: number;
     col: string;
   } | null>(null);
-    const [columns, setColumns] = useState<Column[]>(initialColumns);
-  
+  const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [editValue, setEditValue] = useState('');
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
@@ -332,7 +331,6 @@ export const SpreadsheetBody = ({
     const newColumn: Column = {
       key: newColumnKey,
       header: 'New Column',
-      width: 110,
       visible: true,
       sortable: true,
       class: '',
@@ -347,8 +345,6 @@ export const SpreadsheetBody = ({
     }));
     setTasks(updatedTasks);
   };
-
-  
 
   const formatValue = (key: keyof Task | string, value: string | number) => {
     console.log(`Formatting value for key: ${key}, value: ${value}`);
@@ -376,97 +372,113 @@ export const SpreadsheetBody = ({
   };
 
   return (
-    <div className="bg-white border border-gray-200 h-full">
+    <div className="bg-white border-gray-200 h-full">
       <div ref={tableRef} className="overflow-auto h-full">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-l border-gray-200 sticky top-0 z-10">
-            <tr className="border-b border-gray-200 h-9">
-              <th className="w-10 border-r border-gray-200 px-2 py-1 text-left text-xs font-medium bg-white uppercase tracking-wider"></th>
-              <th className="border-r border-gray-200 bg-gray-200" colSpan={4}>
-                <div className="flex justify-start items-center">
-                  <div className="flex justify-start bg-gray-100 rounded py-0.5 ml-2 pl-2 pr-3 text-gray-800 font-medium">
-                    <img src="Link.svg" alt="link" /> Q3 Financial Overview
+        <table className="w-fit">
+          <thead className="bg-gray-50 border-b border-l border-r border-gray-200 sticky top-0 z-10">
+            <tr className="border-b border-gray-200 h-8">
+              <th className="w-8 border-r border-gray-200 px-2 py-1 text-left text-xs font-medium bg-white uppercase tracking-wider"></th>
+              <th
+                className="border-r border-gray-200 bg-[#E2E2E2] p-2"
+                colSpan={4}
+              >
+                <div className="flex flex-row items-center gap-2">
+                  <div className="flex items-center p-1 gap-1 bg-[#EEEEEE] text-[#545454] rounded-sm">
+                    <img src="Link.svg" alt="link" className="h-4 w-4" />
+                    <span className="font-[400] text-xs">
+                      Q3 Financial Overview
+                    </span>
                   </div>
-                  <img src="Arrow Sync.svg" alt="Sync" />
+                  <img src="Arrow Sync.svg" alt="Sync" className="h-4 w-4" />
                 </div>
               </th>
               <th className="bg-white border-r border-gray-200"></th>
-              <th className="border-r border-gray-200 bg-green-200 text-green-800 px-2 py-1">
-                <div className="flex items-center w-full justify-center">
+              <th className="border-r border-gray-200 bg-[#D2E0D4] px-4 gap-2">
+                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-1">
                   <img
-                    src="Arrow_Split.svg"
+                    src="Arrow_split_green.svg"
                     alt="Split"
-                    className="text-wrap inline-flex h-4 w-4 mr-2"
+                    className="h-4 w-4"
                   />
-                  ABC
-                  <Ellipsis className="ml-1" />
+                  <span className="text-sm font-[500] text-[#505450]">ABC</span>
+                  <Ellipsis className="h-5 w-5 text-[#AFAFAF]" />
                 </div>
               </th>
               <th
-                className="border-r border-gray-200 px-2 py-1 bg-purple-200 text-purple-800"
+                className="border-r border-gray-200 px-4 gap-2 bg-[#DCCFFC]"
                 colSpan={2}
               >
-                <div className="flex items-center w-full justify-center">
+                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-1">
                   <img
-                    src="Arrow_Split.svg"
+                    src="Arrow_split_white.svg"
                     alt="Split"
-                    className="text-wrap inline-flex h-4 w-4 mr-2"
+                    className="h-4 w-4"
                   />
-                  Answer a question
-                  <Ellipsis className="ml-1" />
+                  <span className="text-sm font-[500] text-[#463E59]">
+                    Answer a question
+                  </span>
+                  <Ellipsis className="h-5 w-5 text-[#AFAFAF]" />
                 </div>
               </th>
-              <th className="border-r border-gray-200 px-2 py-1 bg-orange-200 text-orange-800">
-                <div className="flex items-center w-full justify-center">
+              <th className="border-r border-gray-200 px-4 gap-2 bg-[#FAC2AF]">
+                <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-1">
                   <img
-                    src="Arrow_Split.svg"
+                    src="Arrow_split_white.svg"
                     alt="Split"
-                    className="text-wrap inline-flex h-4 w-4 mr-2"
+                    className="h-4 w-4"
                   />
-                  Extract
-                  <Ellipsis className="ml-1" />
+                  <span className="text-sm font-[500] text-[#695149]">
+                    Extract
+                  </span>
+                  <Ellipsis className="h-5 w-5 text-[#AFAFAF]" />
                 </div>
               </th>
               <th
-                className="flex justify-center items-center h-full border-r border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer"
+                className="px-2 gap-2 border-r border-gray-200 cursor-pointer w-32"
                 onClick={() => {
                   addNewColumn();
                   toast.success('New column added!');
                 }}
               >
-                <img src="Add.svg" alt="Add column" />
+                <div className="flex items-center justify-center">
+                  <img src="Add.svg" alt="Add column" className="h-5 w-5" />
+                </div>
               </th>
             </tr>
-            <tr>
-              <th className="border-r border-gray-200 w-10 px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <img src="Number Symbol.svg" alt="Hash" />
+            <tr className='h-9'>
+              <th className="border-r border-gray-200 pl-3 pr-1 gap-1">
+                <img src="Number Symbol.svg" alt="Hash" className="w-5 h-4" />
               </th>
               {visibleColumns.map(column => (
                 <th
                   key={column.key}
-                  className={`border-r border-gray-200 px-2 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 relative group ${column.class}`}
-                  style={{ width: column.width }}
+                  className={`border-r border-gray-200 pr-1 pl-2 gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-gray-100 ${column.class}`}
+                  // style={{ width: column.width }}
                   onClick={e => {
                     e.stopPropagation();
                     handleColumnClick(column.key);
                   }}
                 >
                   <div
-                    className={`flex items-center ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-center'}`}
+                    className={`flex flex-row items-center gap-1 w-full ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-center'}`}
                   >
-                    <div className="flex items-center justify-center">
+                    <div className="inline-flex flex-row gap-1 items-center">
                       {column.icon && (
-                        <img src={column.icon} alt={column.header} />
+                        <img
+                          src={column.icon}
+                          alt={column.header}
+                          className="h-4 w-4"
+                        />
                       )}
-                      <span className="flex items-center justify-center text-center pt-0.5">
+                      <div className="flex w-full items-center justify-center text-center pt-0.5">
                         {column.header}
-                      </span>
+                      </div>
                     </div>
                     {column.icon && column.key !== 'assigned' && (
-                      <span className="ml-3">
+                      <div className="p-1">
                         {sortConfig?.direction === 'asc' ? (
                           <ChevronUp
-                            size={16}
+                            className="h-3 w-3"
                             onClick={() =>
                               column.sortable &&
                               handleSort(column.key as keyof Task)
@@ -474,32 +486,32 @@ export const SpreadsheetBody = ({
                           />
                         ) : (
                           <ChevronDown
-                            size={16}
+                            className="h-3 w-3"
                             onClick={() =>
                               column.sortable &&
                               handleSort(column.key as keyof Task)
                             }
                           />
                         )}
-                      </span>
+                      </div>
                     )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white border-r border-gray-200 divide-y divide-gray-200">
             {filteredTasks.map((task, rowIndex) => (
               <tr
                 key={task.id}
                 className={`hover:bg-gray-50 ${
                   selectedRow === rowIndex
-                    ? 'border-2 border-dashed border-red-300 bg-red-50'
+                    ? 'border-2 border-dashed border-red-300 bg-red-50 h-9'
                     : ''
                 }`}
               >
                 <td
-                  className={`border border-gray-200 px-3 py-2 text-sm text-gray-500 cursor-pointer hover:bg-gray-100 ${
+                  className={`px-3 text-sm text-center text-[#757575] font-[400] cursor-pointer hover:bg-gray-100 ${
                     selectedRow === rowIndex
                       ? 'bg-red-100 border-dashed border-red-300'
                       : ''
@@ -511,7 +523,7 @@ export const SpreadsheetBody = ({
                 {visibleColumns.map(column => (
                   <td
                     key={`${task.id}-${column.key}`}
-                    className={`border border-gray-200 px-2 py-1 min-w-[110px] max-w-[300px] text-sm cursor-cell relative 
+                    className={`border border-gray-200 px-2 gap-2 min-w-[110px] max-w-[300px] text-xs cursor-cell relative 
                         ${
                           selectedCell?.row === rowIndex &&
                           selectedCell?.col === column.key
@@ -538,6 +550,11 @@ export const SpreadsheetBody = ({
                           column.key === 'dueDate' ||
                           column.key === 'estValue'
                             ? 'text-end'
+                            : ''
+                        }
+                        ${
+                          column.key === 'url'
+                            ? 'max-width-[124px]'
                             : ''
                         }
                         `}
