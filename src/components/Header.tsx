@@ -6,16 +6,16 @@ interface SpreadsheetHeaderProps {
   setSearchTerm: (value: string) => void;
 }
 
-function SpreadsheetHeader({ search, setSearchTerm }: SpreadsheetHeaderProps) {
+function Header({ search, setSearchTerm }: SpreadsheetHeaderProps) {
   return (
     <div className="flex justify-between w-[100%] border-b px-4 py-2 border-[#EEEEEE] bg-[#FFFFFF]">
       <div className="flex items-center gap-4">
         <div className="h-6 w-6 flex relative">
           <div
             onClick={() => toast.info('Feature will be implemented soon!')}
-            className="w-5 h-4 p-0.5 absolute top-1 left-0.5 rounded bg-[#618666]"
+            className="w-5 h-4 px-0.5 pt-0.5 absolute top-1 left-0.5 rounded bg-[#618666]"
           >
-            <div className="w-3 h-3 rounded-bl-xs rounded-tl-xs bg-white"></div>
+            <div className="w-3 h-3 rounded-bl-xs rounded-tl-xs mb-0.5 bg-white"></div>
           </div>
         </div>
 
@@ -81,4 +81,4 @@ function SpreadsheetHeader({ search, setSearchTerm }: SpreadsheetHeaderProps) {
   );
 }
 
-export default SpreadsheetHeader
+export default Header;

@@ -42,12 +42,18 @@ type SpreadsheetBodyProps = {
   searchTerm: string;
   totalRow: number;
   setTotalRows: (rows: number) => void;
+  activeTab: string;
+  columns: Column[];
+  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
 };
 
 export const SpreadsheetBody = ({
   searchTerm,
   totalRow,
   setTotalRows,
+  activeTab,
+  columns,
+  setColumns,
 }: SpreadsheetBodyProps) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -63,11 +69,9 @@ export const SpreadsheetBody = ({
     row: number;
     col: string;
   } | null>(null);
-  const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [editValue, setEditValue] = useState('');
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
-
+  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);  
   const unifiedData = useMemo(() => {
     const data = [...tasks];
     const emptyRowsCount = Math.max(0, totalRow - tasks.length);
@@ -82,7 +86,7 @@ export const SpreadsheetBody = ({
 
   const filteredTasks = useMemo(() => {
     let filtered = unifiedData;
-
+    console.log(filtered)
     if (searchTerm) {
       filtered = filtered.filter(task =>
         Object.values(task).some(value =>
@@ -112,8 +116,13 @@ export const SpreadsheetBody = ({
       filtered = [...nonEmpty, ...empty];
     }
 
+    if(activeTab !== 'All Orders') {
+      const StatusData = filtered.filter(data => data.status.toLowerCase() === activeTab.toLowerCase());
+      filtered = StatusData;
+    }
+
     return filtered;
-  }, [unifiedData, searchTerm, sortConfig]);
+  }, [unifiedData, searchTerm, sortConfig, activeTab]);
 
   const visibleColumns = useMemo(
     () => columns.filter(col => col.visible),
@@ -140,6 +149,7 @@ export const SpreadsheetBody = ({
     setSelectedCell(null);
     setSelectedColumn(null);
     setEditingCell(null);
+    toast.success(`Row Number ${rowIndex+1} is selected successfully`)
   };
 
   const handleColumnClick = (colKey: string) => {
@@ -333,7 +343,7 @@ export const SpreadsheetBody = ({
       header: 'New Column',
       visible: true,
       sortable: true,
-      class: '',
+      class: 'bg-[#EEEEEE] text-[#757575]',
       icon: '',
     };
 
@@ -347,7 +357,6 @@ export const SpreadsheetBody = ({
   };
 
   const formatValue = (key: keyof Task | string, value: string | number) => {
-    console.log(`Formatting value for key: ${key}, value: ${value}`);
     if (key === 'estValue' && value !== 0) {
       return new Intl.NumberFormat('en-IN', {
         minimumFractionDigits: 0,
@@ -358,15 +367,19 @@ export const SpreadsheetBody = ({
       return (
         <a
           href={`https://${value}`}
-          className="text-[#121212] hover:text-blue-600 underline text-sm"
+          className="text-[#121212] hover:text-blue-600 underline text-xs"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className='truncate'>{value}</span>
+        {value}
         </a>
       );
     }
     return value !== 0 ? value : '';
+  };
+
+  const HandleElementClick = () => {
+    toast.info('Feature will be implemented very soon.');
   };
 
   return (
@@ -379,6 +392,7 @@ export const SpreadsheetBody = ({
               <th
                 className="border-l border-white bg-[#E2E2E2] px-2 py-1"
                 colSpan={4}
+                onClick={HandleElementClick}
               >
                 <div className="flex flex-row items-center gap-2">
                   <div className="flex items-center p-1 gap-1 bg-[#EEEEEE] text-[#545454] rounded-sm">
@@ -390,13 +404,16 @@ export const SpreadsheetBody = ({
                   <img src="Arrow Sync.svg" alt="Sync" className="h-4 w-4" />
                 </div>
               </th>
-              <th className="bg-white border-l border-white"></th>
-              <th className="border-l border-white bg-[#D2E0D4] px-4 gap-2">
+              <th className="bg-white border-l border-white" onClick={() => {toast.warning("This is an empty cell")}}></th>
+              <th
+                className="border-l border-white bg-[#D2E0D4] px-4 gap-2"
+                onClick={HandleElementClick}
+              >
                 <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
                   <img
-                    src="Arrow_split_green.svg"
+                    src="Green.svg"
                     alt="Split"
-                    className="h-4 w-4"
+                    className="h-3 w-3"
                   />
                   <span className="text-sm font-[500] text-[#505450]">ABC</span>
                   <Ellipsis className="h-4 w-4 m-0.5 text-[#AFAFAF]" />
@@ -405,12 +422,13 @@ export const SpreadsheetBody = ({
               <th
                 className="border-l border-white px-4 gap-2 bg-[#DCCFFC]"
                 colSpan={2}
+                onClick={HandleElementClick}
               >
                 <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
                   <img
                     src="Arrow_split_white.svg"
                     alt="Split"
-                    className="h-4 w-4"
+                    className="h-3 w-3"
                   />
                   <span className="text-sm font-[500] text-[#463E59]">
                     Answer a question
@@ -418,12 +436,15 @@ export const SpreadsheetBody = ({
                   <Ellipsis className="h-4 w-4 m-0.5 text-[#AFAFAF]" />
                 </div>
               </th>
-              <th className="border-l border-white px-4 gap-2 bg-[#FAC2AF]">
+              <th
+                className="border-l border-white px-4 gap-2 bg-[#FAC2AF]"
+                onClick={HandleElementClick}
+              >
                 <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
                   <img
                     src="Arrow_split_white.svg"
                     alt="Split"
-                    className="h-4 w-4"
+                    className="h-3 w-3"
                   />
                   <span className="text-sm font-[500] text-[#695149]">
                     Extract
@@ -443,9 +464,15 @@ export const SpreadsheetBody = ({
                 </div>
               </th>
             </tr>
-            <tr className='border-b border-gray-200 h-8'>
-              <th className="border-l border-white bg-[#EEEEEE] pl-2 pr-1 w-8 h-8 py-1.5 flex items-center justify-center">
-                <img src="Hash.svg" alt="Hash" className="w-4 mr-1 h-4 text-left" />
+            <tr className="border-b border-gray-200 h-8">
+              <th className="border-l border-white bg-[#EEEEEE] pl-2 pr-1 w-8 h-8 py-1.5 flex items-center justify-center"
+              onClick={() => {toast.success("This is the first cell of our Table")}}
+              >
+                <img
+                  src="Hash.svg"
+                  alt="Hash"
+                  className="w-4 mr-1 h-4 text-left"
+                />
               </th>
               {visibleColumns.map(column => (
                 <th
@@ -454,6 +481,7 @@ export const SpreadsheetBody = ({
                   onClick={e => {
                     e.stopPropagation();
                     handleColumnClick(column.key);
+                    toast.success(`${column.header} column is selected successfully`)
                   }}
                 >
                   <div
@@ -495,7 +523,7 @@ export const SpreadsheetBody = ({
                   </div>
                 </th>
               ))}
-              <th className='h-full relative dashed-border-column z-10 w-[124px]'></th>
+              <th className="h-full relative dashed-border-column z-10 w-[124px]"></th>
             </tr>
           </thead>
           <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-200">
@@ -509,19 +537,22 @@ export const SpreadsheetBody = ({
                 }`}
               >
                 <td
-                  className={`w-8 h-8 flex items-center justify-center cursor-pointer relative hover:bg-gray-100 ${
-                    selectedRow === rowIndex
-                      ? 'bg-red-100 border-dashed border-red-300'
-                      : ''
-                  }`}
+                  className={`w-8 h-8 flex items-center justify-center cursor-pointer relative hover:bg-gray-100 
+                    ${
+                      selectedRow === rowIndex
+                        ? 'bg-red-100 border-dashed border-red-300'
+                        : ''
+                    }`}
                   onClick={() => handleRowClick(rowIndex)}
                 >
-                  <span className='text-sm w-fit h-5 top-1.5 text-[#757575] font-[400]'>{task.id}</span>
+                  <span className="text-sm w-fit h-5 top-1.5 text-[#757575] font-[400]">
+                    {task.id}
+                  </span>
                 </td>
                 {visibleColumns.map(column => (
                   <td
                     key={`${task.id}-${column.key}`}
-                    className={`border-l border-gray-200 px-2 gap-2 min-w-[124px] max-w-[256px] text-xs font-[400] text-[#121212] cursor-cell relative 
+                    className={`border-l border-gray-200 px-2 gap-2 min-w-[124px] text-xs font-[400] text-[#121212] cursor-cell relative 
                         ${
                           selectedCell?.row === rowIndex &&
                           selectedCell?.col === column.key
@@ -535,7 +566,7 @@ export const SpreadsheetBody = ({
                         }
                         ${
                           selectedColumn === column.key
-                            ? 'bg-red-50 border-dashed border-red-300'
+                            ? 'bg-red-50 border-r border-dashed border-red-300'
                             : ''
                         }
                         ${
@@ -550,11 +581,7 @@ export const SpreadsheetBody = ({
                             ? 'text-end'
                             : ''
                         }
-                        ${
-                          column.key === 'url'
-                            ? 'max-width-[124px]'
-                            : ''
-                        }
+                        ${column.key === 'url' ? '' : 'max-w-[256px]'}
                         `}
                     onClick={() => handleCellClick(rowIndex, column.key)}
                     onDoubleClick={() =>
@@ -590,21 +617,29 @@ export const SpreadsheetBody = ({
                             {task[column.key]}
                           </span>
                         ) : (
-                          <div className={`text-gray-900 truncate 
-                            ${column.key === 'url' ? "w-[124px]" : ""}
-                            `}>
+                          <div
+                            className={`text-gray-900 truncate 
+                            ${column.key === 'url' ? 'w-[108px]' : ''}
+                            `}
+                          >
                             {formatValue(
                               column.key,
                               task[column.key as keyof Task]
                             )}
-                            {column.key === 'estValue' && task[column.key] ? <span className="pl-1 text-xs text-[#AFAFAF]">₹</span> :""}
+                            {column.key === 'estValue' && task[column.key] ? (
+                              <span className="pl-1 text-xs text-[#AFAFAF]">
+                                ₹
+                              </span>
+                            ) : (
+                              ''
+                            )}
                           </div>
                         )}
                       </>
                     )}
                   </td>
                 ))}
-                <td className='h-full relative dashed-border-column z-10 w-[124px]'></td>
+                <td className="h-full relative dashed-border-column z-10 w-[124px]"></td>
               </tr>
             ))}
           </tbody>
