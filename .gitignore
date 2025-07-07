@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript
+*.d.ts
+src/**/*.d.ts
+
+# Build output
+dist/
+build/
+
+# Cache
+node_modules/
+.cache/
+
+# Deployment
+.gh-pages/
