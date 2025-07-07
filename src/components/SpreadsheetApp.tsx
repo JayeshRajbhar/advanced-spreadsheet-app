@@ -6,6 +6,7 @@ import type { Column } from '../types/Column';
 import { Footer } from './Footer';
 import { Toolbar } from './Toolbar';
 import SpreadsheetBody from './SpreadsheetBody';
+import { toast } from 'sonner';
 
 const SpreadsheetApp = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +19,8 @@ const SpreadsheetApp = () => {
         col.key === columnKey ? { ...col, visible: !col.visible } : col
       )
     );
+    console.log(`${columnKey} column is hidden Successfully`);
+    toast.success(`${columnKey} column is hidden Successfully`);
   };
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const addNewRow = () => {
