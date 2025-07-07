@@ -12,7 +12,7 @@ function Header({ search, setSearchTerm }: SpreadsheetHeaderProps) {
       <div className="flex items-center gap-4">
         <div className="h-6 w-6 flex relative">
           <div
-            onClick={() => toast.info('Feature will be implemented soon!')}
+            onClick={() => {toast.info('Feature will be implemented soon!'); console.log('Feature will be implemented soon!')}}
             className="w-5 h-4 px-0.5 pt-0.5 absolute top-1 left-0.5 rounded bg-[#618666]"
           >
             <div className="w-3 h-3 rounded-bl-xs rounded-tl-xs mb-0.5 bg-white"></div>
@@ -21,25 +21,25 @@ function Header({ search, setSearchTerm }: SpreadsheetHeaderProps) {
 
         <div className="flex items-center gap-1 text-sm font-medium text-[#AFAFAF]">
           <div className="flex items-center gap-1">
-            <span onClick={() => toast.info('Feature comming soon!')}>
+            <span onClick={() => {toast.info('Feature comming soon!'); console.log('Feature comming soon!')}}>
               Workspace
             </span>
             <ChevronRight className="w-3 h-3" />
-            <span onClick={() => toast.info('Feature comming soon!')}>
+            <span onClick={() => {toast.info('Feature comming soon!'); console.log('Feature comming soon!')}}>
               Folder 2
             </span>
             <ChevronRight className="w-3 h-3" />
           </div>
           <div className="flex items-center gap-2">
             <span
-              onClick={() => toast.info('Feature comming soon!')}
+              onClick={() => {toast.info('Feature comming soon!'); console.log('Feature comming soon!')}}
               className="font-medium h-[20px] text-[#121212]"
             >
               Spreadsheet 3
             </span>
             <Ellipsis
               className="text-[#AFAFAF]"
-              onClick={() => toast.info('coming soon!')}
+              onClick={() => {toast.info('coming soon!'); console.log('coming soon!')}}
             />
           </div>
         </div>
@@ -56,7 +56,7 @@ function Header({ search, setSearchTerm }: SpreadsheetHeaderProps) {
             />
         </div>
         <div
-            onClick={() => toast.info('Feature coming soon!')}
+            onClick={() => {toast.info('Feature coming soon!'); console.log('Feature coming soon!')}}
             className="relative p-2"
           >
             <img src="Alert.svg" alt="Notification" className='h-6 w-6'/>
@@ -65,7 +65,7 @@ function Header({ search, setSearchTerm }: SpreadsheetHeaderProps) {
             </div>
         </div>
         <div
-            onClick={() => toast.info('Feature coming soon!')}
+            onClick={() => {toast.info('Feature coming soon!'); console.log('Feature coming soon!')}}
             className="flex flex-row py-1.5 pl-2 pr-3 gap-2 cursor-pointer transition-colors"
           >
             <img src="Ellipse 1.png" alt="User" className="h-7 w-7" />

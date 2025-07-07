@@ -6,7 +6,6 @@ import { getStatusColor } from '../constants/StatusColour';
 import { getPriorityColor } from '../constants/ColourPriority';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { initialTasks } from '../constants/initialTasks';
-import { initialColumns } from '../constants/initialColumns';
 
 const createEmptyTask = (
   id: number,
@@ -71,7 +70,7 @@ export const SpreadsheetBody = ({
   } | null>(null);
   const [editValue, setEditValue] = useState('');
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);  
+  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
   const unifiedData = useMemo(() => {
     const data = [...tasks];
     const emptyRowsCount = Math.max(0, totalRow - tasks.length);
@@ -86,7 +85,6 @@ export const SpreadsheetBody = ({
 
   const filteredTasks = useMemo(() => {
     let filtered = unifiedData;
-    console.log(filtered)
     if (searchTerm) {
       filtered = filtered.filter(task =>
         Object.values(task).some(value =>
@@ -116,11 +114,12 @@ export const SpreadsheetBody = ({
       filtered = [...nonEmpty, ...empty];
     }
 
-    if(activeTab !== 'All Orders') {
-      const StatusData = filtered.filter(data => data.status.toLowerCase() === activeTab.toLowerCase());
+    if (activeTab !== 'All Orders') {
+      const StatusData = filtered.filter(
+        data => data.status.toLowerCase() === activeTab.toLowerCase()
+      );
       filtered = StatusData;
     }
-
     return filtered;
   }, [unifiedData, searchTerm, sortConfig, activeTab]);
 
@@ -135,6 +134,8 @@ export const SpreadsheetBody = ({
       direction:
         current?.key === key && current.direction === 'asc' ? 'desc' : 'asc',
     }));
+    toast.success(`"${key}" column is sorted successfully`);
+    console.log(`"${key}" column is sorted successfully`);
   };
 
   const handleCellClick = (rowIndex: number, colKey: string) => {
@@ -142,6 +143,12 @@ export const SpreadsheetBody = ({
     setSelectedRow(null);
     setSelectedColumn(null);
     setEditingCell(null);
+    toast.success(
+      `Cell having row number ${rowIndex + 1} and column header "${colKey}" is selected`
+    );
+    console.log(
+      `Cell having row number ${rowIndex + 1} and column header "${colKey}" is selected`
+    );
   };
 
   const handleRowClick = (rowIndex: number) => {
@@ -149,7 +156,8 @@ export const SpreadsheetBody = ({
     setSelectedCell(null);
     setSelectedColumn(null);
     setEditingCell(null);
-    toast.success(`Row Number ${rowIndex+1} is selected successfully`)
+    toast.success(`Row Number ${rowIndex + 1} is selected successfully`);
+    console.log(`Row Number ${rowIndex + 1} is selected successfully`);
   };
 
   const handleColumnClick = (colKey: string) => {
@@ -238,7 +246,7 @@ export const SpreadsheetBody = ({
     setTasks(updatedTasks);
 
     setSelectedColumn(null);
-  }, [selectedColumn, columns, tasks]);
+  }, [selectedColumn, columns, tasks, setColumns]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -250,7 +258,6 @@ export const SpreadsheetBody = ({
         }
         return;
       }
-
       if (!selectedCell) return;
 
       const maxRow = filteredTasks.length - 1;
@@ -264,12 +271,16 @@ export const SpreadsheetBody = ({
           setSelectedCell(prev =>
             prev ? { ...prev, row: Math.max(0, prev.row - 1) } : null
           );
+          console.log(`Navigating to cell upward`);
+          toast.info(`Navigating to cell upward`)
           break;
         case 'ArrowDown':
           e.preventDefault();
           setSelectedCell(prev =>
             prev ? { ...prev, row: Math.min(maxRow, prev.row + 1) } : null
           );
+          console.log(`Navigating to cell downward`);
+          toast.info(`Navigating to cell downward`)
           break;
         case 'ArrowLeft':
           e.preventDefault();
@@ -283,6 +294,8 @@ export const SpreadsheetBody = ({
                 : null
             );
           }
+          console.log(`Navigating to cell on the left`);
+          toast.info(`Navigating to cell on the left`)
           break;
         case 'ArrowRight':
           e.preventDefault();
@@ -296,6 +309,8 @@ export const SpreadsheetBody = ({
                 : null
             );
           }
+          console.log(`Navigating to cell on the right`);
+          toast.info(`Navigating to cell on the right`)
           break;
         case 'Enter':
           if (selectedCell) {
@@ -371,7 +386,7 @@ export const SpreadsheetBody = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-        {value}
+          {value}
         </a>
       );
     }
@@ -380,6 +395,7 @@ export const SpreadsheetBody = ({
 
   const HandleElementClick = () => {
     toast.info('Feature will be implemented very soon.');
+    console.log('Feature will be implemented very soon.');
   };
 
   return (
@@ -404,17 +420,19 @@ export const SpreadsheetBody = ({
                   <img src="Arrow Sync.svg" alt="Sync" className="h-4 w-4" />
                 </div>
               </th>
-              <th className="bg-white border-l border-white" onClick={() => {toast.warning("This is an empty cell")}}></th>
+              <th
+                className="bg-white border-l border-white"
+                onClick={() => {
+                  toast.warning('This is an empty cell');
+                  console.log('This is an empty cell');
+                }}
+              ></th>
               <th
                 className="border-l border-white bg-[#D2E0D4] px-4 gap-2"
                 onClick={HandleElementClick}
               >
                 <div className="flex flex-row justify-center items-center py-0.5 px-1 gap-2">
-                  <img
-                    src="Green.svg"
-                    alt="Split"
-                    className="h-3 w-3"
-                  />
+                  <img src="Green.svg" alt="Split" className="h-3 w-3" />
                   <span className="text-sm font-[500] text-[#505450]">ABC</span>
                   <Ellipsis className="h-4 w-4 m-0.5 text-[#AFAFAF]" />
                 </div>
@@ -457,6 +475,7 @@ export const SpreadsheetBody = ({
                 onClick={() => {
                   addNewColumn();
                   toast.success('New column added!');
+                  console.log('New column added!');
                 }}
               >
                 <div className="flex items-center justify-center">
@@ -465,8 +484,12 @@ export const SpreadsheetBody = ({
               </th>
             </tr>
             <tr className="border-b border-gray-200 h-8">
-              <th className="border-l border-white bg-[#EEEEEE] pl-2 pr-1 w-8 h-8 py-1.5 flex items-center justify-center"
-              onClick={() => {toast.success("This is the first cell of our Table")}}
+              <th
+                className="border-l border-white bg-[#EEEEEE] pl-2 pr-1 w-8 h-8 py-1.5 flex items-center justify-center"
+                onClick={() => {
+                  toast.success('This is the first cell of our Table');
+                  console.log('This is the first cell of our Table');
+                }}
               >
                 <img
                   src="Hash.svg"
@@ -478,16 +501,23 @@ export const SpreadsheetBody = ({
                 <th
                   key={column.key}
                   className={`border-l border-white pr-1 pl-2 gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-gray-100 ${column.class}`}
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleColumnClick(column.key);
-                    toast.success(`${column.header} column is selected successfully`)
-                  }}
                 >
                   <div
                     className={`flex flex-row items-center gap-1 w-full ${column.icon && column.key !== 'assigned' ? 'justify-between' : 'justify-start'}`}
                   >
-                    <div className="inline-flex flex-row gap-1 items-center">
+                    <div
+                      className="inline-flex flex-row gap-1 items-center"
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleColumnClick(column.key);
+                        toast.success(
+                          `${column.header} column is selected successfully`
+                        );
+                        console.log(
+                          `${column.header} column is selected successfully`
+                        );
+                      }}
+                    >
                       {column.icon && (
                         <img
                           src={column.icon}

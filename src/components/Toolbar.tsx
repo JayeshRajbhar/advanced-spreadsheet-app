@@ -17,8 +17,10 @@ export function Toolbar(
   const HandleHide = () => {
     if (Hide) {
       toast.success('Toolbar is hidden');
+      console.log('Toolbar is hidden');
     } else {
       toast.success('Toolbar is visible!');
+      console.log('Toolbar is visible!');
     }
   };
   const exportToExcel = () => {
@@ -90,10 +92,12 @@ export function Toolbar(
             )}
           </button>
           <button
-            onClick={() =>
+            onClick={() =>{
               toast.info(
                 'Sort functionality is already implemented for every column, click on the column header dropdown button to sort!'
-              )
+              );
+              console.log('Sort functionality is already implemented for every column, click on the column header dropdown button to sort!')
+            }
             }
             className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md whitespace-nowrap"
             type="button"
@@ -102,8 +106,10 @@ export function Toolbar(
             Sort
           </button>
           <button
-            onClick={() =>
-              toast.info('Data can be filtered using the tabs in the footer.')
+            onClick={() =>{
+              toast.info('Data can be filtered using the tabs in the footer.');
+              console.log('Data can be filtered using the tabs in the footer.');
+            }
             }
             className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md whitespace-nowrap"
             type="button"
@@ -112,8 +118,8 @@ export function Toolbar(
             Filter
           </button>
           <button
-            onClick={() =>
-              toast.info('Cell view functionality will be implemented soon!')
+            onClick={() =>{
+              toast.info('Cell view functionality will be implemented soon!'); console.log('Cell view functionality will be implemented soon!')}
             }
             className="flex items-center gap-1 pl-2 pr-3 py-2 text-sm text-[#121212] hover:bg-gray-100 rounded-md whitespace-nowrap"
             type="button"
@@ -128,7 +134,7 @@ export function Toolbar(
 
       <div className="flex flex-row items-center gap-2">
         <button
-          onClick={() => toast.warning('Login to import data!')}
+          onClick={() => {toast.warning('Login to import data!'); console.log('Login to import data!')}}
           className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md whitespace-nowrap"
           type="button"
         >
@@ -140,6 +146,7 @@ export function Toolbar(
         <button
           onClick={() => {
             toast.success('Data exported successfully!');
+            console.log('Data exported successfully!');
             exportToExcel();
           }}
           className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md whitespace-nowrap"
@@ -151,7 +158,7 @@ export function Toolbar(
           </span>
         </button>
         <button
-          onClick={() => toast.warning('Login to share data!')}
+          onClick={() =>{ toast.warning('Login to share data!'); console.log('Login to share data!')}}
           className="flex flex-row items-center gap-1 pr-3 pl-2 py-2 border border-[#EEEEEE] hover:bg-gray-100 rounded-md whitespace-nowrap"
           type="button"
         >
@@ -161,7 +168,7 @@ export function Toolbar(
           </span>
         </button>
         <button
-          onClick={() => toast.success('New action created!')}
+          onClick={() =>{ toast.success('New action created!'); console.log('New action created!')}}
           className="inline-flex px-6 py-2 gap-1 bg-[#4B6A4F] text-white rounded-md shadow hover:bg-green-700 whitespace-nowrap"
           type="button"
         >

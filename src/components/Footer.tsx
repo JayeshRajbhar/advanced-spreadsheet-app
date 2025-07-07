@@ -10,10 +10,12 @@ export function Footer({onAddRow,setActiveTab}:FooterProps) {
     const [value, setValue] = useState("true");
     const handleClick = (value:string) => {
       if(value === "All Orders"){
-        toast.success("Showing All orders")
+        toast.success("Showing All orders");
+        console.log("Showing all orders")
       } 
       else {
         toast.success(`Showing orders with the status of "${value}".`)
+        console.log(`Showing orders with the status of "${value}".`)
       }
     }
   return (
@@ -23,7 +25,7 @@ export function Footer({onAddRow,setActiveTab}:FooterProps) {
         <div className={`w-fit h-full px-4 py-2.5 hover:bg-emerald-50 font-[600] text-[16px] ${value === "Pending" ? "border-t-[#4B6A4F] border-t-2 bg-[#E8F0E9] text-[#3E5741]" : "text-[#757575]"}`} onClick={() => { setValue("Pending"); handleClick("In-process"); setActiveTab("In-process")}}>Pending</div>
         <div className={`w-fit h-full px-4 py-2.5 hover:bg-emerald-50 font-[600] text-[16px] ${value === "Reviewed" ? "border-t-[#4B6A4F] border-t-2 bg-[#E8F0E9] text-[#3E5741]" : "text-[#757575]"}`} onClick={() => { setValue("Reviewed"); handleClick("Complete"); setActiveTab("Complete")}}>Reviewed</div>
         <div className={`w-fit h-full px-4 py-2.5 hover:bg-emerald-50 font-[600] text-[16px] ${value === "Arrived" ? "border-t-[#4B6A4F] border-t-2 bg-[#E8F0E9] text-[#3E5741]" : "text-[#757575]"}`} onClick={() => { setValue("Arrived"); handleClick("Need to start"); setActiveTab("Need to start")}}>Arrived</div>
-        <div className={`w-fit h-full px-1 py-2 hover:bg-emerald-50 font-[600] text-[16px] ${value === "Add New" ? "border-t-[#4B6A4F] border-t-2 bg-[#E8F0E9] text-[#3E5741]" : "text-[#757575]"}`} onClick={() =>  { setValue("Add New"); onAddRow(); toast.success('New row added!'); }}>
+        <div className={`w-fit h-full px-1 py-2 hover:bg-emerald-50 font-[600] text-[16px] ${value === "Add New" ? "border-t-[#4B6A4F] border-t-2 bg-[#E8F0E9] text-[#3E5741]" : "text-[#757575]"}`} onClick={() =>  { setValue("Add New"); onAddRow(); toast.success('New row added!'); console.log('New row added!'); }}>
           <Plus className="p-1 h-7 w-7"/>
         </div>
       </div>
