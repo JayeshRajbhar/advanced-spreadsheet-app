@@ -1,69 +1,93 @@
-# React + TypeScript + Vite
+# Advanced Spreadsheet App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A pixel-perfect, static React + TypeScript spreadsheet prototype inspired by Google Sheets/Excel, built with Vite and Tailwind CSS.  
+Implements a highly interactive, Figma-matched spreadsheet UI with keyboard navigation, column hide toggles, and export features.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Setup
 
-## Expanding the ESLint configuration
+1. **Install dependencies:**
+   ```sh
+   npm install
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. **Start the development server:**
+   ```sh
+   npm run dev
+   ```
+   Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+3. **Lint and type-check:**
+   ```sh
+   npm run lint
+   npm run type-check
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+4. **Build for production:**
+   ```sh
+   npm run build
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **React 19** (with Vite)
+- **TypeScript** (strict mode)
+- **Tailwind CSS** (utility-first styling)
+- **Simple HTML table** (custom grid logic, no external table library)
+- **No backend/state management library** (all state is local)
+- **lucide-react** for icons
+- **sonner** for toasts/notifications
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## 🎯 Features & Criteria
+
+- **Pixel-perfect layout** matching [Figma design](https://www.figma.com/design/3nywpu5sz45RrCmwe68QZP/Intern-Design-Assigment?node-id=2-2535&t=DJGGMt8I4fiZjoIB-1)
+- **Spreadsheet experience:**  
+  - Editable grid with keyboard navigation (arrow keys, Enter, Escape)
+  - Column hide/show toggles in toolbar
+  - Sort and filter (via UI and tabs)
+  - Add/remove rows and columns
+  - Export to Excel (visible columns only)
+  - All buttons/tabs are interactive (log to console or show toast)
+- **Responsive, accessible UI** with sticky headers, colored badges, and tooltips
+- **No dead UI:** All controls provide feedback or state changes
+- **Code quality:** Passes ESLint, Prettier, and TypeScript checks
+
+---
+
+## ⚡ Trade-offs & Notes
+
+- **No backend:** All data is local and resets on refresh.
+- **No state management library:** State is managed via React hooks.
+- **No authentication or sharing:** "Share" and "Import" buttons show toasts only.
+- **Simple HTML table** is used for custom grid logic and no external table library is used.
+- **Export** uses only visible columns and current data.
+- **Stretch:** Keyboard navigation, column resize/hide, and toasts are implemented.
+- **Design:** Some minor spacing or color differences may exist due to browser rendering vs. Figma.
+
+---
+
+## 📦 Submission
+
+- **Live URL:** _[(https://jayeshrajbhar.github.io/advanced-spreadsheet-app/)]_
+- **GitHub:** _[(https://github.com/JayeshRajbhar/advanced-spreadsheet-app)]_
+
+---
+
+## 📝 Scripts
+
+- `npm run dev` — Start local dev server
+- `npm run build` — Build for production
+- `npm run lint` — Run ESLint and Prettier
+- `npm run type-check` — Run TypeScript in strict mode
+
+---
+
+## 🙏 Credits
+
+- [Figma Design](https://www.figma.com/design/3nywpu5sz45RrCmwe68QZP/Intern-Design-Assigment?node-id=2-2535&t=DJGGMt8I4fiZjoIB-1)
+- [Vite](https://vitejs.dev/), [Tailwind CSS](https://tailwindcss.com/),
